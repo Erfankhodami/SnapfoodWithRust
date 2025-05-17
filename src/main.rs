@@ -1,7 +1,5 @@
 mod models;
 mod handlers;
-mod moudele;
-
 use std::fmt::format;
 use std::vec;
 use models::*;

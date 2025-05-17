@@ -38,7 +38,29 @@ impl Manager{
             username: username,
             password: password,
             orders: Vec::new(),
+            wallet:0,
         });
         return Ok(());
+    }
+}
+
+impl User{
+    fn NewOrder(&mut self,_userIndex:usize,_restaurantIndex:usize,_item: Item,manager: Manager){
+        let order=Order{
+            restaurantIndex:_restaurantIndex,
+            userIndex:_userIndex,
+            item:_item,
+            orderStatus:OrderStatus::inCart
+        };
+        self.orders.push(order.clone());
+        manager.restaurants[_restaurantIndex].orders.push(order.clone());
+    }
+    fn PayOrder(&mut self,order:&mut Order){
+        self.wallet-=order.item.price;
+        order.orderStatus=OrderStatus::onWay;
+    }
+
+    fn DisplayOrders(&mut self){
+
     }
 }
