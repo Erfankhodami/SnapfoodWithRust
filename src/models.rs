@@ -2,11 +2,6 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 use std::cell::RefCell;
-
-pub enum AccountMode{
-    _User,
-    _Restaurant,
-}
 #[derive(Clone,Debug)]
 pub enum OrderStatus{
     inCart,
@@ -35,7 +30,7 @@ pub struct Item{
 }
 
 
-#[derive(Default)]
+#[derive(Default,Debug)]
 pub struct User{
     pub username:String,
     pub password:String,
@@ -44,7 +39,7 @@ pub struct User{
     pub wallet: u64,
 }
 
-#[derive(Default)]
+#[derive(Default,Debug)]
 pub struct Restaurant{
     pub username:String,
     pub password:String,
