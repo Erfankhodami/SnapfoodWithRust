@@ -19,9 +19,14 @@ fn main() {
     let mut restaurants:Vec<Restaurant>=Vec::new();
     let mut loggedInRestaurant:Result<&mut Restaurant,String>;
 
-    //just to test restaurants displaying
-    restaurants.push(Restaurant::default());
-    restaurants.push(Restaurant::default());
+    match LoadUserFromJson() {
+        Ok(_users)=>{
+            users=_users;
+        }
+        Err(e)=>{
+            println!("{e}");
+        }
+    }
     let mainPanelDisplayString=
         "here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nregister new restaurant: 3\nrestaurant login: 4\nexit: 9".to_string();
     println!("{mainPanelDisplayString}");
@@ -87,6 +92,7 @@ fn main() {
                 println!("invalid command!");
             }
         };
+        SaveUsersToJson(&users);
         println!("{mainPanelDisplayString}");
         command = ReadCommand();
     }

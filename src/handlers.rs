@@ -1,4 +1,6 @@
 #![allow(non_snake_case)]
+
+use std::f32::consts::E;
 use std::io;
 use std::io::{stdin, stdout, Write};
 use std::ops::{Add, AddAssign};
@@ -7,6 +9,10 @@ use crate::models;
 use models::*;
 use text_io;
 use text_io::read;
+use serde::{Serialize,Deserialize};
+use std::fs;
+use std::fs::File;
+use std::path::Path;
 
 impl User {
     pub fn Login(self, users: &mut Vec<User>) -> Result<&mut User, String> {
@@ -144,4 +150,38 @@ pub fn ReadCommand() -> i32 {
             }
         }
     }
+}
+
+pub fn SaveUsersToJson(users:&Vec<User>){
+    let path=Path::new("data/user.json");
+    let gonnaSaveData=serde_json::to_string_pretty(users).unwrap();
+    if(!path.exists()){
+        if let Err(e)=File::create(path){
+            println!("{e}");
+        }
+    }
+    let result=fs::write(path,gonnaSaveData);
+    if let Err(e)=result{
+        println!("error happened in saving files to json!: {e}");
+        return;
+    }
+    println!("file saved successfully");
+}
+pub fn LoadUserFromJson()->Result<Vec<User>,String>{
+    let path=Path::new("data/user.json");
+    let gonnaLoadData=fs::read_to_string(path);
+    if let Err(e)=gonnaLoadData{
+        return Err(e.to_string());
+    }
+    let users=serde_json::from_str(gonnaLoadData.unwrap().as_str());
+    if let Err(e)=users{
+        return Err(e.to_string());
+    }
+    return Ok(users.unwrap());
+}
+pub fn SaveRestaurantsToJson(){
+
+}
+pub fn SaveOrdersToJson(){
+
 }
