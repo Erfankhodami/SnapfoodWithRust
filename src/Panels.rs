@@ -1,11 +1,16 @@
+#![allow(non_snake_case)]
 use std::process::exit;
 use text_io::read;
 use crate::models;
 use models::*;
-use crate::handlers::ReadCommand;
+use crate::handlers::{InputItem, ReadCommand};
 
 pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
-    println!("here is user panel: \nplease select:\nmake new order: 1\ndisplay orders: 2");
+    let displayString="here is user panel: \n\
+    please select:\n\
+    make new order: 1\n\
+    display orders: 2".to_string();
+    println!("{displayString}");
     let mut command=ReadCommand();
     while command!=9 {
         match command {
@@ -13,6 +18,7 @@ pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
                 let order=Order::default();
                 let mut selectedRestaurant=OpenRestaurantSelectionPanel(restaurants);
                 if(OpenRestuarntItemsSelectionPanel(&mut selectedRestaurant.unwrap(),user)){
+                    user.orders.push(order);
                     println!("order added successfully!");
                 }
             }
@@ -31,7 +37,31 @@ pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
                 println!("invalid command");
             }
         }
-        println!("here is user panel: \nplease select:\nmake new order: 1");
+        println!("{displayString}");
+        command=ReadCommand();
+    }
+}
+
+
+pub fn OpenRestaurantAdminPanel(restuarant:&mut Restaurant){
+    let displayString="here is restaurant panel\n\
+    please select:\n\
+    add item into menu: 1\n\
+    exit: 9".to_string();
+    println!("{displayString}");
+    let mut command=ReadCommand();
+    while command!=9 {
+        match command {
+            1=>{
+                println!("please enter item name and price:");
+                let item=InputItem();
+                restuarant.items.push(item);
+            }
+            _=>{
+                println!("invalid command!");
+            }
+        }
+        println!("{displayString}");
         command=ReadCommand();
     }
 }
@@ -42,9 +72,14 @@ pub fn OpenRestaurantSelectionPanel(restaurants:&mut Vec<Restaurant>)->Option<&m
     }
     println!("here is the restaurants available. please select one:");
     for n in restaurants.iter() {
-        println!("{:?}",restaurants);
+        println!("{} {:?}\n",n.index,n);
     }
+    println!("enter {} to exit",restaurants.len());
     let command=ReadCommand();
+    if(command==restaurants.len() as i32){
+        println!("aborting...");
+        return None
+    }
     Some(&mut restaurants[command as usize])
 }
 pub fn OpenRestuarntItemsSelectionPanel(restaurant: &mut Restaurant,user:&mut User)->bool{
@@ -53,13 +88,14 @@ pub fn OpenRestuarntItemsSelectionPanel(restaurant: &mut Restaurant,user:&mut Us
         return false;
     }
     println!("here is items available for this restaurant. please select one:");
-    for n in &restaurant.items {
-        println!("{:?}",n);
+    for (i,n) in restaurant.items.iter().enumerate() {
+        println!("{} {:?}",i,n);
     }
-    println!("{}: exit",restaurant.items.len());
+    println!("enter {} to exit",restaurant.items.len());
     let command=ReadCommand();
     if(command as usize==restaurant.items.len()){
         println!("aborting...");
+        return false;
     }
     let selectedItem:&Item=&restaurant.items[command as usize];
     let order=Order{
@@ -69,5 +105,5 @@ pub fn OpenRestuarntItemsSelectionPanel(restaurant: &mut Restaurant,user:&mut Us
         orderStatus:OrderStatus::inCart,
     };
     restaurant.orders.push(order);
-    return true;
+    true
 }

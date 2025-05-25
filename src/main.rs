@@ -1,3 +1,4 @@
+#![allow(non_snake_case)]
 mod models;
 mod handlers;
 mod Panels;
@@ -10,16 +11,22 @@ use models::*;
 use handlers::*;
 use text_io;
 use text_io::read;
-use crate::Panels::OpenUserPanel;
+use crate::Panels::{OpenRestaurantAdminPanel, OpenUserPanel};
 
 fn main() {
-    let mut restaurants:Vec<Restaurant>=Vec::new();
-    restaurants.push(Restaurant::default());
-    restaurants.push(Restaurant::default());
     let mut users: Vec<User> = Vec::new();
     let mut loggedInUser: Result<&mut User, String>;
-    println!("here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nexit: 9");
+    let mut restaurants:Vec<Restaurant>=Vec::new();
+    let mut loggedInRestaurant:Result<&mut Restaurant,String>;
+
+    //just to test restaurants displaying
+    restaurants.push(Restaurant::default());
+    restaurants.push(Restaurant::default());
+    let mainPanelDisplayString=
+        "here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nregister new restaurant: 3\nrestaurant login: 4\nexit: 9".to_string();
+    println!("{mainPanelDisplayString}");
     let mut command = ReadCommand();
+
     while command != 9 {
         match command {
             1 => {
@@ -49,11 +56,38 @@ fn main() {
                     }
                 }
             }
+            3=>{
+                println!("input the yourRestaurant name and password: ");
+                let restaurant=InputRestaurant();
+                let result=restaurant.Register(&mut restaurants);
+                match result {
+                    Ok(())=>{
+                        println!("restaurant registered successfully!");
+                    }
+                    Err(e)=>{
+                        println!("{e}");
+                    }
+                }
+            }
+            4=>{
+                println!("input restaurant name and password:");
+                let restaurant=InputRestaurant();
+                loggedInRestaurant=restaurant.Login(&mut restaurants);
+                match loggedInRestaurant {
+                    Err(e)=>{
+                        println!("{e}");
+                    }
+                    _=>{
+                        println!("logged in successfully!");
+                        OpenRestaurantAdminPanel(&mut loggedInRestaurant.unwrap());
+                    }
+                }
+            }
             _ => {
                 println!("invalid command!");
             }
         };
-        println!("here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nexit: 9");
+        println!("{mainPanelDisplayString}");
         command = ReadCommand();
     }
 }

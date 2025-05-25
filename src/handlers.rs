@@ -1,10 +1,13 @@
+#![allow(non_snake_case)]
 use std::io;
 use std::io::{stdin, stdout, Write};
 use std::ops::{Add, AddAssign};
+use std::ptr::read;
 use crate::models;
 use models::*;
 use text_io;
 use text_io::read;
+
 impl User {
     pub fn Login(self, users: &mut Vec<User>) -> Result<&mut User, String> {
         for n in users {
@@ -51,10 +54,10 @@ impl User {
 }
 
 impl Restaurant {
-    pub fn Login(&self, restaurants: &Vec<Restaurant>) -> Result<&Restaurant, String> {
-        for n in restaurants.iter() {
+    pub fn Login(self, restaurants: &mut Vec<Restaurant>) -> Result<&mut Restaurant, String> {
+        for n in restaurants.iter_mut() {
             if (n.username == self.username) {
-                return Ok(self);
+                return Ok(n);
             }
         }
         Err("No such user exists".to_string())
@@ -104,8 +107,24 @@ pub fn InputUser() -> User {
     user.password = password;
     user
 }
+pub fn InputRestaurant() -> Restaurant {
+    let username = read!();
+    let password = read!();
+    let mut restaurant = Restaurant::default();
+    restaurant.username = username;
+    restaurant.password = password;
+    restaurant
+}
 
-
+pub fn InputItem()->Item{
+    let name=read!();
+    let price=read!();
+    let item=Item{
+        name:name,
+        price:price,
+    };
+    item
+}
 pub fn ReadCommand() -> i32 {
     let stdin = io::stdin();
 
@@ -114,10 +133,10 @@ pub fn ReadCommand() -> i32 {
         io::stdout().flush().unwrap();
         let mut input = String::new();
         stdin.read_line(&mut input).expect("Failed to read input");
-
         if input.trim().is_empty() {
             continue;
         }
+
         match input.trim().parse() {
             Ok(num) => return num,
             Err(_) => {
