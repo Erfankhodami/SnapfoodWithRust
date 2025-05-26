@@ -27,6 +27,16 @@ fn main() {
             println!("{e}");
         }
     }
+
+    match LoadRestaurantFromJson() {
+        Ok(_restaurants)=>{
+            restaurants=_restaurants;
+        }
+        Err(e)=>{
+            println!("{e}");
+        }
+    }
+
     let mainPanelDisplayString=
         "here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nregister new restaurant: 3\nrestaurant login: 4\nexit: 9".to_string();
     println!("{mainPanelDisplayString}");
@@ -92,6 +102,7 @@ fn main() {
                 println!("invalid command!");
             }
         };
+        SaveRestaurantsToJson(&restaurants);
         SaveUsersToJson(&users);
         println!("{mainPanelDisplayString}");
         command = ReadCommand();

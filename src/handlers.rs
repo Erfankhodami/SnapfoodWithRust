@@ -133,9 +133,8 @@ pub fn InputItem()->Item{
 }
 pub fn ReadCommand() -> i32 {
     let stdin = io::stdin();
-
+    print!("Enter a number: ");
     loop {
-        print!("Enter a number: ");
         io::stdout().flush().unwrap();
         let mut input = String::new();
         stdin.read_line(&mut input).expect("Failed to read input");
@@ -179,8 +178,33 @@ pub fn LoadUserFromJson()->Result<Vec<User>,String>{
     }
     return Ok(users.unwrap());
 }
-pub fn SaveRestaurantsToJson(){
+pub fn SaveRestaurantsToJson(restaurants: &Vec<Restaurant>){
+    let path=Path::new("data/restaurants.json");
+    let gonnaSaveData=serde_json::to_string_pretty(restaurants).unwrap();
+    if(!path.exists()){
+        if let Err(e)=File::create(path){
+            println!("{e}");
+        }
+    }
+    let result=fs::write(path,gonnaSaveData);
+    if let Err(e)=result{
+        println!("error happened in saving files to json!: {e}");
+        return;
+    }
+    println!("file saved successfully");
 
+}
+pub fn LoadRestaurantFromJson()->Result<Vec<Restaurant>,String>{
+    let path=Path::new("data/restaurants.json");
+    let gonnaLoadData=fs::read_to_string(path);
+    if let Err(e)=gonnaLoadData{
+        return Err(e.to_string());
+    }
+    let users=serde_json::from_str(gonnaLoadData.unwrap().as_str());
+    if let Err(e)=users{
+        return Err(e.to_string());
+    }
+    return Ok(users.unwrap());
 }
 pub fn SaveOrdersToJson(){
 

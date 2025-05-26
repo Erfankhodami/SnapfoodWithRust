@@ -1,5 +1,9 @@
 #![allow(non_snake_case)]
+
+use std::env::args_os;
+use std::net::Shutdown::Read;
 use std::process::exit;
+use std::ptr::addr_eq;
 use text_io::read;
 use crate::models;
 use models::*;
@@ -9,7 +13,11 @@ pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
     let displayString="here is user panel: \n\
     please select:\n\
     make new order: 1\n\
-    display orders: 2".to_string();
+    display orders: 2\n\
+    remove order: 3\n\
+    pay order: 4\n\
+    charge wallet: 5\n\
+    exit: 9".to_string();
     println!("{displayString}");
     let mut command=ReadCommand();
     while command!=9 {
@@ -23,6 +31,7 @@ pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
                 }
             }
             2=>{
+                println!("here are your orders:");
                 let result=user.DisplayOrders();
                 match result {
                     Some(data)=>{
@@ -33,6 +42,33 @@ pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
                     }
                 }
             }
+            3=>{
+                if(user.orders.len()==0){
+                    println!("no orders found!");
+                }else {
+                    println!("here are your orders:\nselect one to remove\nselect {} to exit", user.orders.len());
+                }
+                for (i,n) in user.orders.iter().enumerate() {
+                    println!("{} {:?}",i,n);
+                }
+                let command=ReadCommand();
+                if command!=user.orders.len() as i32{
+                    user.orders.remove(command as usize);
+                    println!("order removed successfully!");
+                }else{
+                    println!("aborting...");
+                }
+            }
+            4=>{
+                if let Err(e)=OpenOrderPayPanel(user){
+                    println!("{e}");
+                }
+            }
+            5=>{
+                println!("input amount you wanna charge your wallet:");
+                let amount=ReadCommand();
+                user.wallet+=amount as u64;
+            }
             _=>{
                 println!("invalid command");
             }
@@ -42,7 +78,30 @@ pub fn OpenUserPanel(user:&mut User, restaurants:&mut Vec<Restaurant>){
     }
 }
 
+pub fn OpenOrderPayPanel(user:&mut User)->Result<(),String>{
+    println!("select an order to pay or select {} to exit",user.orders.len());
+    for (i,n) in user.orders.iter().enumerate() {
+        match n.orderStatus {
+            OrderStatus::inCart=>{
+                println!("{} {:?}",i,n);
+            }
+            _=>{}
+        }
 
+    }
+    let command=ReadCommand() as usize;
+    if(command==user.orders.len()){
+        return Err("order didnt paid!".to_string());
+    }
+    let orderPrice=user.orders[command].item.price;
+    if(orderPrice>user.wallet){
+        return Err("not enough cash to pay this order!".to_string());
+    }
+    user.wallet-=orderPrice;
+    user.orders[command].orderStatus=OrderStatus::onWay;
+    println!("order paid successfully. order is on way!");
+    Ok(())
+}
 pub fn OpenRestaurantAdminPanel(restuarant:&mut Restaurant){
     let displayString="here is restaurant panel\n\
     please select:\n\
