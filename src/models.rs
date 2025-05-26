@@ -21,6 +21,8 @@ pub struct Order{
     pub userIndex: usize,
     pub item: Item,
     pub orderStatus:OrderStatus,
+    pub orderIndex:usize,
+    pub amount:i32,
 }
 
 
@@ -35,16 +37,16 @@ pub struct Item{
 pub struct User{
     pub username:String,
     pub password:String,
-    pub orders: Vec<Order>,
     pub index:usize,
     pub wallet: u64,
+    pub isBanned:bool,
 }
 
-#[derive(Serialize,Deserialize,Default,Debug)]
+#[derive(Serialize,Deserialize,Default)]
 pub struct Restaurant{
     pub username:String,
     pub password:String,
     pub items:Vec<Item>,
-    pub orders: Vec<Order>,
     pub index:usize,
+    pub isBanned:bool,
 }

@@ -11,14 +11,14 @@ use models::*;
 use handlers::*;
 use text_io;
 use text_io::read;
-use crate::Panels::{OpenRestaurantAdminPanel, OpenUserPanel};
+use crate::Panels::{OpenAdminPanel, OpenRestaurantAdminPanel, OpenUserPanel};
 
 fn main() {
     let mut users: Vec<User> = Vec::new();
     let mut loggedInUser: Result<&mut User, String>;
     let mut restaurants:Vec<Restaurant>=Vec::new();
     let mut loggedInRestaurant:Result<&mut Restaurant,String>;
-
+    let mut orders:Vec<Order>=Vec::new();
     match LoadUserFromJson() {
         Ok(_users)=>{
             users=_users;
@@ -37,8 +37,19 @@ fn main() {
         }
     }
 
+    match LoadOredersFromJson() {
+        Ok(_orders)=>{
+            orders=_orders;
+        }
+        Err(e)=>{
+            println!("{e}");
+        }
+    }
+
     let mainPanelDisplayString=
-        "here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nregister new restaurant: 3\nrestaurant login: 4\nexit: 9".to_string();
+        "here is main panel:\nplease select:\nregister new user: 1\nlogin user: 2\nregister new restaurant: 3\nlogin restaurant: 4\
+        \nlogin admin: 8\
+        \nexit: 9".to_string();
     println!("{mainPanelDisplayString}");
     let mut command = ReadCommand();
 
@@ -67,7 +78,7 @@ fn main() {
                     }
                     _ => {
                         println!("logged in successfully!");
-                        OpenUserPanel(&mut loggedInUser.unwrap(), &mut restaurants)
+                        OpenUserPanel(&mut loggedInUser.unwrap(), &mut restaurants,&mut orders)
                     }
                 }
             }
@@ -94,16 +105,26 @@ fn main() {
                     }
                     _=>{
                         println!("logged in successfully!");
-                        OpenRestaurantAdminPanel(&mut loggedInRestaurant.unwrap());
+                        OpenRestaurantAdminPanel(&mut loggedInRestaurant.unwrap(),&mut orders);
                     }
                 }
             }
+            8=>{
+                println!("enter admin username and password:");
+                let username:String=read!();
+                let password:String=read!();
+                if(password.eq("pass")&&username.eq("admin9"))
+                {
+                    println!("login successfully!");
+                    OpenAdminPanel(&mut users,&mut restaurants);
+                }            }
             _ => {
                 println!("invalid command!");
             }
         };
         SaveRestaurantsToJson(&restaurants);
         SaveUsersToJson(&users);
+        SaveOrdersToJson(&orders);
         println!("{mainPanelDisplayString}");
         command = ReadCommand();
     }
