@@ -1,0 +1,9 @@
+[
+  {
+    "username": "user",
+    "password": "pass",
+    "index": 0,
+    "wallet": 127500,
+    "isBanned": true
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "restaurantIndex": 0,
+    "userIndex": 0,
+    "item": {
+      "name": "nugget",
+      "price": 1500
+    },
+    "orderStatus": "onWay",
+    "orderIndex": 0,
+    "amount": 15
+  }
+]

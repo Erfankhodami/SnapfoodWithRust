@@ -1,0 +1,14 @@
+[
+  {
+    "username": "kfc",
+    "password": "pass",
+    "items": [
+      {
+        "name": "nugget",
+        "price": 1500
+      }
+    ],
+    "index": 0,
+    "isBanned": false
+  }
+]

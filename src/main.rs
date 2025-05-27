@@ -2,6 +2,7 @@
 mod models;
 mod handlers;
 mod Panels;
+mod admin;
 
 use std::fmt::format;
 use std::ptr::read;
@@ -11,7 +12,8 @@ use models::*;
 use handlers::*;
 use text_io;
 use text_io::read;
-use crate::Panels::{OpenAdminPanel, OpenRestaurantAdminPanel, OpenUserPanel};
+use Panels::*;
+use admin::*;
 
 fn main() {
     let mut users: Vec<User> = Vec::new();
@@ -117,7 +119,10 @@ fn main() {
                 {
                     println!("login successfully!");
                     OpenAdminPanel(&mut users,&mut restaurants);
-                }            }
+                }else{
+                    println!("admin username or password is wrong!");
+                }
+            }
             _ => {
                 println!("invalid command!");
             }
