@@ -9,5 +9,16 @@
     "orderStatus": "onWay",
     "orderIndex": 0,
     "amount": 15
+  },
+  {
+    "restaurantIndex": 0,
+    "userIndex": 1,
+    "item": {
+      "name": "nugget",
+      "price": 1500
+    },
+    "orderStatus": "Done",
+    "orderIndex": 1,
+    "amount": 15
   }
 ]

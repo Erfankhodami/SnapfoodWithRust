@@ -10,5 +10,12 @@
     ],
     "index": 0,
     "isBanned": false
+  },
+  {
+    "username": "res",
+    "password": "s",
+    "items": [],
+    "index": 1,
+    "isBanned": false
   }
 ]

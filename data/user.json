@@ -5,5 +5,12 @@
     "index": 0,
     "wallet": 127500,
     "isBanned": true
+  },
+  {
+    "username": "user2",
+    "password": "pass",
+    "index": 1,
+    "wallet": 7500,
+    "isBanned": true
   }
 ]
